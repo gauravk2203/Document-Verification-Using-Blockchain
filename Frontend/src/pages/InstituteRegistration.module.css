@@ -1,0 +1,121 @@
+:root{
+    --background : #0E221B;
+    --input : #176137;
+    --button: #34C759;
+}
+
+main{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    background-color: var(--background);
+    color: white;
+    overflow: hidden;
+}
+
+.imageHolder{
+    flex-basis: 50%;
+}
+
+.imageHolder img {
+    mix-blend-mode: color-dodge;
+}
+
+.formHolder{
+    flex-basis: 50%;
+    text-align: left;
+    margin: auto;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: fit-content;
+}
+
+form > * {
+   margin: 8px 0;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.125rem;
+}
+
+input {
+    width: -webkit-fill-available;
+    padding: 12px;
+    background-color: var(--input);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    color: white;
+}
+.border{
+  width: 100%;
+  height: fit-content;
+  padding: 2px; 
+  background: linear-gradient(to right , #DDF82D , #29DC6B) ;
+  margin-top: 4px;
+  border-radius: 8px; 
+}
+
+::-webkit-input-placeholder{
+    color: white;
+    opacity: 0.6;
+}
+
+input:focus-visible{
+    outline: none;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-text-fill-color: #ffffff;
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px #23232329;
+}
+
+button{
+    padding: 12px 32px;
+    width: fit-content;
+    border-radius: 12px;
+    background-color: var(--button);
+    color: white;
+    margin: 24px auto;
+}
+
+button:hover{
+    cursor: pointer;
+}
+
+.institute{
+    background: linear-gradient(to right , #DDF82D , #29DC6B);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.heading{
+    width: 60%;
+    margin-bottom: 28px;
+}
+
+.heading h1{
+    font-size: 2.5rem;
+}
+
+.CodeContainer{
+    display: flex;
+    justify-content: space-between;
+}
+
+.CodeContainer > label{
+    flex-basis: 49%;
+}
+
+.error{
+    color: red;
+}

@@ -1,0 +1,103 @@
+section{
+    width: 100%;
+    height: 100vh;
+    background-color: #0E221B;
+    color: white;
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+}
+
+.container{
+    min-width: 80%;
+    /* min-height: 82%; */
+    height: 650px;
+    background-color: #283A34;
+    display: grid;
+    grid-template-rows: 80px 1px 1fr;
+    border-radius: 12px;
+    margin-top: auto;
+    margin-bottom: 8px;
+}
+
+.fileUploadConatiner{
+    display: flex;
+    align-items: center;
+    width: 80%;
+    height: 80%;
+    margin: auto;
+    background-color: #152A23;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    text-align: center;
+    border-radius: 28px;
+}
+
+.fileUpload{
+    margin: auto;
+    width: fit-content;
+    height: fit-content;
+}
+
+.fileUpload > *{
+    margin: 12px;
+}
+
+.uploadicon {
+    padding: 8px;
+    border-radius: 100%;
+    background-color: white;
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+}
+
+.uploadicon > img{
+    width: 80px;
+    height: 80px;
+}
+
+.title h1{
+    font-size: 28px;
+    margin: auto;
+}
+
+.title{
+    display: flex;
+    padding: 12px 65px;
+    position: relative;
+    width: fit-content;
+    margin: 0 12px;
+}
+
+.title::after{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 3px;
+    background-color: white;
+}
+
+hr{
+    opacity: 0.3;
+}
+
+.hidden-input {
+    display: none; /* Hide the default input */
+  }
+  
+  .upload-button {
+    background: #22c55e;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .upload-button:hover {
+    background: #16a34a;
+  } 
