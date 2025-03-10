@@ -20,13 +20,13 @@ function Navbar() {
                     <Link to="/Registration">University</Link>
                 </li>
                 <li>
-                    <Link to="/Student">Student</Link>
+                    <Link to="/StudentRegistration">Student</Link>
                 </li>
             </ul>
         </div>
         <div className="rightside">
             <button>
-              <Link to="/login">
+              <Link to="/student-login">
               Login
               </Link>
             </button>

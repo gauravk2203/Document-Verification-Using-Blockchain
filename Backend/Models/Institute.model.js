@@ -30,7 +30,11 @@ const instituteSchema = new mongoose.Schema(
     email: {
       type: String,
       required : true ,
-    }
+    },
+    createdStudents: [{ 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'InstituteStudent'
+     }]
   },
   { timestamps: true }
 );

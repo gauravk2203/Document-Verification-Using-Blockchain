@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Document } from './Document.model.js';
+
 
 const studentSchema = new mongoose.Schema(
   {
@@ -23,7 +23,7 @@ const studentSchema = new mongoose.Schema(
     document: 
       {
         type: mongoose.Schema.ObjectId,
-        ref: "Document",
+        ref: "SelectedDocument",
       },
   },
   { timestamps: true }

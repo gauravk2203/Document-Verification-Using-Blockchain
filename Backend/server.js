@@ -6,7 +6,8 @@ import cookieParser from "cookie-parser";
 
 import documentRoute from './Routes/DocumentRoute.js';
 import authRoute from './Routes/authRoute.js';
-import vault from './Routes/vaultRoute.js'
+import vault from './Routes/vaultRoute.js';
+import student from './Routes/studentRoute.js';
 
 
 dotenv.config();
@@ -39,6 +40,7 @@ app.use(cookieParser())
 app.use('/api/document', documentRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/vault', vault);
+app.use('/api/Institute', student);
 
 
 app.listen(PORT, () => {

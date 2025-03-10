@@ -1,0 +1,79 @@
+/* Vault Container */
+.container {
+    padding: 20px;
+    margin: 0 auto;
+}
+
+/* Section Title */
+.heading {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Card Layout */
+.cardContainer {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Card Styling */
+.card {
+    width: 280px;  /* Fixed width */
+    height: 350px; /* Fixed height */
+    background: #ffffff;
+    border: 2px solid #00bfff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Image Placeholder */
+.imagePlaceholder {
+    width: 100%;
+    height: 150px;
+    background: #d3d3d3;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+/* Card Content */
+.cardContent {
+    flex-grow: 1; /* Makes sure content adjusts inside the card */
+    text-align: left;
+}
+
+/* Typography */
+.title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.hash {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    word-wrap: break-word;
+}
+
+.course,
+.institution {
+    font-size: 14px;
+    color: #555;
+}
+
+.issueDate {
+    font-size: 12px;
+    color: #777;
+    margin-top: auto; /* Pushes date to the bottom */
+}

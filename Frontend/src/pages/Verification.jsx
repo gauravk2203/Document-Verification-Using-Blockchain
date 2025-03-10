@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './Verification.css';
+import './Verification.module.css';
 
 function Verifier() {
     const [fileName, setFileName] = useState(null);

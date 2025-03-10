@@ -1,9 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./Login.css"; // Import external CSS file
+import "./Login.module.css"; // Import external CSS file
 
-export default function Login() {
+export default function StudentLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -14,9 +14,10 @@ export default function Login() {
     setError(null);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", { email, password }, { withCredentials: true });
+      const res = await axios.post("http://localhost:5000/api/auth/studentlogin", { email, password }, { withCredentials: true });
       if (res.status === 200) {
-        navigate("/fetchdocument"); // Redirect after successful login
+        setUserType("student");
+        navigate("/student-dashboard"); // Redirect after successful login
       }
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
