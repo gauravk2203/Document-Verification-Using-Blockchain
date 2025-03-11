@@ -30,6 +30,11 @@ function Navbar() {
               Login
               </Link>
             </button>
+            <button>
+              <Link to="/institute-login">
+              Institute Login
+              </Link>
+            </button>
             <button>Sign up</button>
         </div>
       </nav>

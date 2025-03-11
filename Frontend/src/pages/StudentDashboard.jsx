@@ -1,22 +1,20 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios"; 
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { Header } from "../components/Dashboard/Header.jsx";
 import { Upload } from "../components/Dashboard/Upload.jsx";
 import { MyVault } from "../components/Documents.jsx";
+import { DocumentCard } from "../components/DocumentCard.jsx";
 import styles from "./StudentDashboard.module.css";
 
 export const StudentDashboard = () => {
-  const [documents, setDocuments] = useState([]);
+  const navigate = useNavigate();
+  const [fetchedDocument, setFetchedDocument] = useState(null);
+  const [vaultDocuments, setVaultDocuments] = useState([]);
   const [file, setFile] = useState(null);
-  const [headerInfo, setHeaderInfo] = useState({
-    title: "",
-    abcID: "",
-  });
-
-  const [status, setStatus] = useState({
-    loading: true,
-    error: null,
-  });
+  const [headerInfo, setHeaderInfo] = useState({ title: "", abcID: "" });
+  const [status, setStatus] = useState({ loading: true, error: null });
+  const [vaultLoading, setVaultLoading] = useState(true); // Separate loading for vault
 
   const fetchStudents = useCallback(async () => {
     try {
@@ -31,6 +29,8 @@ export const StudentDashboard = () => {
     } catch (err) {
       console.error("Error fetching students:", err.message);
       setStatus((prev) => ({ ...prev, error: "Failed to fetch students" }));
+    } finally {
+      setStatus((prev) => ({ ...prev, loading: false }));
     }
   }, []);
 
@@ -41,35 +41,59 @@ export const StudentDashboard = () => {
     }
 
     try {
-      console.log("Uploading file and fetching documents...");
-      
-      // Create FormData to send the file
+      console.log("Uploading file and fetching document...");
       const formData = new FormData();
       formData.append("file", file);
 
-      // Send POST request with the file
       const response = await axios.post("http://localhost:5000/api/document/fetch", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("Matching documents:", response.data);
-      setDocuments(Array.isArray(response.data) ? response.data : []);
+      console.log("Fetched document:", response.data);
+      setFetchedDocument(response.data);
     } catch (err) {
-      console.error("Error fetching documents:", err.message);
-      setStatus((prev) => ({ ...prev, error: "Failed to fetch documents" }));
+      console.error("Error fetching document:", err.message);
+      setStatus((prev) => ({ ...prev, error: "Failed to fetch document" }));
     }
   }, [file]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await fetchStudents();
-      } finally {
-        setStatus((prev) => ({ ...prev, loading: false }));
+  const addToVault = async () => {
+    if (!fetchedDocument) return;
+
+    try {
+      console.log("Adding document to vault...");
+      const response = await axios.post("http://localhost:5000/api/vault/addtoVault",{ withCredentials: true });
+
+      if (response.data.success) {
+        alert("Document added to vault successfully!");
+        setVaultDocuments((prev) => [...prev, fetchedDocument]);
+        setFetchedDocument(null);
       }
-    };
-    fetchData();
-  }, [fetchStudents]);
+    } catch (err) {
+      console.error("Error adding document to vault:", err.message);
+      alert("Failed to add document to vault.");
+    }
+  };
+
+  const fetchVaultDocuments = useCallback(async () => {
+    setVaultLoading(true); // Start loading only for vault documents
+    try {
+      console.log("Fetching vault documents...");
+      const response = await axios.get("http://localhost:5000/api/vault/Myvault",{ withCredentials: true });
+
+      setVaultDocuments(response.data.documents);
+    } catch (err) {
+      console.error("Error fetching vault documents:", err.message);
+      setVaultDocuments([]);
+    } finally {
+      setVaultLoading(false); // Stop loading only for vault
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchStudents();
+    fetchVaultDocuments();
+  }, [fetchStudents, fetchVaultDocuments]);
 
   if (status.loading) return <p>Loading...</p>;
   if (status.error) return <p>{status.error}</p>;
@@ -82,9 +106,22 @@ export const StudentDashboard = () => {
         <Upload setFile={setFile} />
       </div>
       <button onClick={fetchDocuments} className={styles["fetch-btn"]}>
-        Fetch Documents
+        Fetch Document
       </button>
-      <MyVault documents={documents} />
+      <DocumentCard document={fetchedDocument} addToVault={addToVault} />
+
+      {vaultLoading ? (
+        <p>Loading Vault Documents...</p>
+      ) : (
+        <>
+          <MyVault documents={vaultDocuments.slice(0, 4)} />
+          {vaultDocuments.length > 4 && (
+            <button onClick={() => navigate("/vault")} className={styles["more-btn"]}>
+              View More
+            </button>
+          )}
+        </>
+      )}
     </div>
   );
 };

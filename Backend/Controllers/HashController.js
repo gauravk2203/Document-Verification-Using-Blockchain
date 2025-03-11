@@ -6,7 +6,8 @@ const contract = ContractInteraction();
 
 export const GetHash = async (req , res) => {
     const { studentUniqueId } = req.body;
-       
+    
+    console.log('This is the studentID', studentUniqueId);
        
        if (!studentUniqueId) {
            return res.status(400).json({ error: "Student Unique ID is required." });

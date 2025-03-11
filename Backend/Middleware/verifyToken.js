@@ -7,6 +7,7 @@ const SECRET_KEY = process.env.SECRET_KEY || "default_secret_key"; // Ensure it'
 
 const verifyToken = (req, res, next) => {
     try {
+        
         // Get token from cookies
         const token = req.cookies?.jwt;
 

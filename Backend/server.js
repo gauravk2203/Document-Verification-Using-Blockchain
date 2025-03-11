@@ -12,6 +12,7 @@ import student from './Routes/studentRoute.js';
 
 dotenv.config();
 const app = express();
+app.use(cookieParser())
 
 const PORT = process.env.PORT;
 
@@ -36,7 +37,7 @@ const connectToDatabase = async () => {
 
 connectToDatabase();
 
-app.use(cookieParser())
+
 app.use('/api/document', documentRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/vault', vault);

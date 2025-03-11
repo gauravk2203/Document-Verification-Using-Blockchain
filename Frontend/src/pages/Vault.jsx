@@ -1,57 +1,53 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { DocumentCard } from "../components/DocumentCard.jsx";
+import styles from "./Vault.module.css";
 
-const VaultDocuments = ({ abcID }) => {
-    const [documents, setDocuments] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+export const Vault = () => {
+  const navigate = useNavigate();
+  const [vaultDocuments, setVaultDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchVaultDocuments = async () => {
-            try {
-                if (!abcID) {
-                    setError("abcID is required.");
-                    setLoading(false);
-                    return;
-                }
+  const fetchVaultDocuments = useCallback(async () => {
+    setLoading(true);
+    try {
+      console.log("Fetching all vault documents...");
+      const response = await axios.get("http://localhost:5000/api/vault/Myvault");
+      setVaultDocuments(response.data.documents);
+    } catch (err) {
+      console.error("Error fetching vault documents:", err.message);
+      setError("Failed to fetch vault documents.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-                const response = await axios.get("http://localhost:5000/vault", {
-                    params: { abcID }
-                });
+  useEffect(() => {
+    fetchVaultDocuments();
+  }, [fetchVaultDocuments]);
 
-                setDocuments(response.data.documents || []);
-            } catch (error) {
-                setError("Error fetching documents.");
-                console.error("Fetch Error:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+  return (
+    <div className={styles["vault-container"]}>
+      <h1>My Vault</h1>
+      <button onClick={() => navigate(-1)} className={styles["back-btn"]}>
+        ← Back to Dashboard
+      </button>
 
-        fetchVaultDocuments();
-    }, [abcID]);
-
-    return (
-        <div className="p-4 max-w-xl mx-auto">
-            <h2 className="text-xl font-bold mb-4">My Vault</h2>
-
-            {loading && <p className="text-gray-500">Loading...</p>}
-            {error && <p className="text-red-500">{error}</p>}
-
-            {documents.length > 0 ? (
-                <ul className="border rounded-lg p-4 shadow">
-                    {documents.map((doc, index) => (
-                        <li key={index} className="py-2 border-b last:border-0">
-                            <p className="font-semibold">{doc.documentName}</p>
-                            <p className="text-sm text-gray-500">Hash: {doc.documentHash}</p>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                !loading && <p className="text-gray-500">No documents found.</p>
-            )}
+      {loading ? (
+        <p>Loading Vault Documents...</p>
+      ) : error ? (
+        <p className={styles["error-msg"]}>{error}</p>
+      ) : vaultDocuments.length === 0 ? (
+        <p>No documents found in your vault.</p>
+      ) : (
+        <div className={styles["document-grid"]}>
+          {vaultDocuments.map((doc, index) => (
+            <DocumentCard key={index} document={doc} />
+          ))}
         </div>
-    );
+      )}
+    </div>
+  );
 };
-
-export default VaultDocuments;

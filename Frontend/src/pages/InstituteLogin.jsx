@@ -1,58 +1,64 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./Login.module.css"; // Import external CSS file
+import styles from "./InstituteLogin.module.css";
 
-export default function InstituteLogin() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+const InstituteLogin = ({ setUserType }) => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({ emailOrCode: "", password: "" });
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    setError("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/studentlogin", { email, password }, { withCredentials: true });
-      if (res.status === 200) {
-        setUserType("institute");
-        navigate("/institute-dashboard"); // Redirect after successful login
-      }
+      const response = await axios.post("http://localhost:5000/api/auth/institutelogin", {
+        email: formData.emailOrCode.includes("@") ? formData.emailOrCode : undefined,
+        instituteCode: !formData.emailOrCode.includes("@") ? formData.emailOrCode : undefined,
+        password: formData.password,
+      });
+
+      alert(response.data.message);
+      setUserType("institute");
+      navigate("/institute-dashboard");
     } catch (err) {
-      setError(err.response?.data?.error || "Login failed");
+      setError(err.response?.data?.error || "Login failed. Please try again.");
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2>Login</h2>
-        {error && <p className="error-message">{error}</p>}
+    <div className={styles.container}>
+      <div className={styles.loginBox}>
+        <h2>Institute Login</h2>
+        {error && <p className={styles.error}>{error}</p>}
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit" className="login-button">
-            Login
-          </button>
+          <input
+            type="text"
+            name="emailOrCode"
+            placeholder="Email or Institute Code"
+            value={formData.emailOrCode}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <button type="submit">Login</button>
         </form>
+        <p>Don't have an account? <a href="/registration">Register here</a></p>
       </div>
     </div>
   );
-}
+};
+
+export default InstituteLogin;

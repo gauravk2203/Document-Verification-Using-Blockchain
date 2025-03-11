@@ -18,7 +18,7 @@ router.post('/hash', GetHash);
 
 router.post('/verify', upload.single('file'), verify);
 
-router.post('/fetch', verifyToken , upload.single('file'), fetchHash);
+router.post('/fetch' , upload.single('file'), verifyToken,  fetchHash);
 
 router.get('/hashes/:abcID', getDocuments);
 
