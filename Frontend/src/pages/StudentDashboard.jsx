@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../components/Dashboard/Header.jsx";
 import { Upload } from "../components/Dashboard/Upload.jsx";
@@ -46,7 +47,10 @@ export const StudentDashboard = () => {
       formData.append("file", file);
 
       const response = await axios.post("http://localhost:5000/api/document/fetch", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${Cookies.get("jwt")}`
+         },
+         withCredentials: true,
       });
 
       console.log("Fetched document:", response.data);
@@ -58,16 +62,29 @@ export const StudentDashboard = () => {
   }, [file]);
 
   const addToVault = async () => {
-    if (!fetchedDocument) return;
-
+    if (!fetchedDocument) {
+      alert("No document found to add.");
+      return;
+    }
+  
     try {
-      console.log("Adding document to vault...");
-      const response = await axios.post("http://localhost:5000/api/vault/addtoVault",{ withCredentials: true });
-
+      console.log("Adding document to vault...", fetchedDocument);
+  
+      const response = await axios.post(
+        "http://localhost:5000/api/vault/addtoVault",
+         fetchedDocument , // Pass the fetched document
+        {
+          headers: { Authorization: `Bearer ${Cookies.get("jwt")}` },
+          withCredentials: true,
+        }
+      );
+  
       if (response.data.success) {
         alert("Document added to vault successfully!");
         setVaultDocuments((prev) => [...prev, fetchedDocument]);
         setFetchedDocument(null);
+      } else {
+        alert("Failed to add document to vault.");
       }
     } catch (err) {
       console.error("Error adding document to vault:", err.message);
@@ -79,7 +96,10 @@ export const StudentDashboard = () => {
     setVaultLoading(true); // Start loading only for vault documents
     try {
       console.log("Fetching vault documents...");
-      const response = await axios.get("http://localhost:5000/api/vault/Myvault",{ withCredentials: true });
+       const response = await axios.get("http://localhost:5000/api/vault/Myvault", {
+      withCredentials: true, 
+      headers: { Authorization: `Bearer ${Cookies.get("jwt")}` }
+    });
 
       setVaultDocuments(response.data.documents);
     } catch (err) {

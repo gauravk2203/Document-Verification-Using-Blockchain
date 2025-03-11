@@ -24,20 +24,19 @@ export const Login = async (req, res) => {
                 email: user.email
              }, // Payload
             SECRET_KEY, 
-            { expiresIn: "1h" } // Expiration time
+            { expiresIn: "7d" } // Expiration time
         );
 
         // Store JWT in an HTTP-only cookie
-        const cookie = res.cookie("jwt", token, {
+         res.cookie("jwt", token, {
             httpOnly: true,  // Prevents JavaScript access (XSS protection)
             secure: false, // Use true only in production (HTTPS required)
             sameSite: "Lax", // Prevents CSRF
-            maxAge: 3600000  // 1 hour expiration (milliseconds)
+            maxAge: 24 * 60 * 60 * 1000,  // 1 day expiration (milliseconds)
         });
 
-        console.log('this is my cookie' , cookie);
 
-        res.status(200).json({ message: "Login successful" });
+        res.status(200).json({ message: "Login successful" , token});
 
     } catch (error) {
         res.status(500).json({ error: "Server error" });

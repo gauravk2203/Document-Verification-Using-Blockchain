@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";  // Import js-cookie
 import styles from "./InstituteLogin.module.css";
 
 const InstituteLogin = ({ setUserType }) => {
@@ -24,6 +25,16 @@ const InstituteLogin = ({ setUserType }) => {
       });
 
       alert(response.data.message);
+
+      if (response.data.token) {
+        // Store JWT in a cookie
+        Cookies.set("jwt", response.data.token, {
+          expires: 1, // 1 day
+          secure: false, // Change to true in production
+          sameSite: "Lax"
+        });
+      }
+
       setUserType("institute");
       navigate("/institute-dashboard");
     } catch (err) {

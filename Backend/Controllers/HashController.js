@@ -5,6 +5,7 @@ import { generateIPFSHash } from "../Services/generateHash.js";
 const contract = ContractInteraction();
 
 export const GetHash = async (req , res) => {
+    console.log("Authenticated User:", req.user);
     const { studentUniqueId } = req.body;
     
     console.log('This is the studentID', studentUniqueId);
@@ -30,22 +31,27 @@ export const GetHash = async (req , res) => {
    };
 
    export const fetchHash = async (req, res) => {
-    const { abcID } = req.body;
-    const fileBuffer = req.file?.buffer; // Access file buffer from memory
+    const { abcID } = req.user;
+    
+    // console.log("🔹 Received Headers:", req.headers);
+    // console.log("🔹 Received Cookies:", req.cookies);
+    // console.log("🔹 Received Body:", req.body);
+    // console.log("🔹 Received File:", req.file);
+    // console.log("🛠 Received abcID:", abcID);
+    // console.log("🛠 Received file:", req.file);
 
-    if (!abcID || !fileBuffer) {
+    if (!abcID || !req.file) {
         return res.status(400).json({ error: 'Student Unique ID and file are required.' });
     }
+
+    const fileBuffer = req.file.buffer; // Access file buffer from memory
 
     try {
         // ✅ Generate document hash from the uploaded file
         const documentHash = await generateIPFSHash(fileBuffer);
 
-        // ✅ Fetch the documents for the given student
-        const document = await Document.findOne(
-            { abcID },
-            { "documents": 1 } // Retrieve all document details
-        );
+        // ✅ Fetch documents for the given student
+        const document = await Document.findOne({ abcID }, { "documents": 1 });
 
         if (!document || !document.documents || document.documents.length === 0) {
             return res.status(404).json({ error: 'No documents found for this student.' });
@@ -61,11 +67,10 @@ export const GetHash = async (req , res) => {
         }
 
     } catch (error) {
-        console.error(error);
+        console.error("❌ Error in fetchHash:", error);
         return res.status(500).json({ error: 'An error occurred while fetching the document.' });
     }
 };
-
 
 export const getDocuments = async (req, res) => {
     const { abcID } = req.params;

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";  // Import js-cookie
 import styles from "./StudentLogin.module.css";
 
 const StudentLogin = ({ setUserType }) => {
@@ -19,6 +20,16 @@ const StudentLogin = ({ setUserType }) => {
     try {
       const response = await axios.post("http://localhost:5000/api/auth/studentlogin", formData);
       alert(response.data.message);
+
+      if (response.data.token) {
+        // Store JWT in a cookie
+        Cookies.set("jwt", response.data.token, {
+          expires: 1, // 1 day
+          secure: false, // Set to true in production
+          sameSite: "Lax"
+        });
+      }
+
       setUserType("student");
       navigate("/student-dashboard");
     } catch (err) {
