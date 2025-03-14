@@ -7,7 +7,7 @@ dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY; // Ensure this is set in your .env file
 
 export const Login = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password , userType } = req.body;
 
     try {
         const user = await Student.findOne({ email });
@@ -21,19 +21,20 @@ export const Login = async (req, res) => {
             { 
                 studentId: user._id,
                 abcID: user.abcID, 
-                email: user.email
+                email: user.email,
+                userType
              }, // Payload
             SECRET_KEY, 
-            { expiresIn: "7d" } // Expiration time
+            { expiresIn: "2h" } // Expiration time
         );
 
         // Store JWT in an HTTP-only cookie
-         res.cookie("jwt", token, {
-            httpOnly: true,  // Prevents JavaScript access (XSS protection)
-            secure: false, // Use true only in production (HTTPS required)
-            sameSite: "Lax", // Prevents CSRF
-            maxAge: 24 * 60 * 60 * 1000,  // 1 day expiration (milliseconds)
-        });
+        //  res.cookie("jwt", token, {
+        //     httpOnly: true,  // Prevents JavaScript access (XSS protection)
+        //     secure: false, // Use true only in production (HTTPS required)
+        //     sameSite: "Lax", // Prevents CSRF
+        //     maxAge: 24 * 60 * 60 * 1000,  // 1 day expiration (milliseconds)
+        // });
 
 
         res.status(200).json({ message: "Login successful" , token});

@@ -4,9 +4,8 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../components/Dashboard/Header.jsx";
 import { Upload } from "../components/Dashboard/Upload.jsx";
-import { MyVault } from "../components/Documents.jsx";
-import { DocumentCard } from "../components/DocumentCard.jsx";
-import styles from "./StudentDashboard.module.css";
+import { MyVault } from "../Components/vault.jsx";
+import { DocumentCard } from "../Components/DocumentCard.jsx";
 
 export const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -15,11 +14,10 @@ export const StudentDashboard = () => {
   const [file, setFile] = useState(null);
   const [headerInfo, setHeaderInfo] = useState({ title: "", abcID: "" });
   const [status, setStatus] = useState({ loading: true, error: null });
-  const [vaultLoading, setVaultLoading] = useState(true); // Separate loading for vault
+  const [vaultLoading, setVaultLoading] = useState(true);
 
   const fetchStudents = useCallback(async () => {
     try {
-      console.log("Fetching students...");
       const { data } = await axios.get("http://localhost:5000/api/Institute/getStudents");
       if (data.length > 0) {
         setHeaderInfo({
@@ -28,7 +26,6 @@ export const StudentDashboard = () => {
         });
       }
     } catch (err) {
-      console.error("Error fetching students:", err.message);
       setStatus((prev) => ({ ...prev, error: "Failed to fetch students" }));
     } finally {
       setStatus((prev) => ({ ...prev, loading: false }));
@@ -42,21 +39,16 @@ export const StudentDashboard = () => {
     }
 
     try {
-      console.log("Uploading file and fetching document...");
       const formData = new FormData();
       formData.append("file", file);
 
       const response = await axios.post("http://localhost:5000/api/document/fetch", formData, {
-        headers: { "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${Cookies.get("jwt")}`
-         },
-         withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${Cookies.get("jwt")}` },
+        withCredentials: true,
       });
 
-      console.log("Fetched document:", response.data);
       setFetchedDocument(response.data);
     } catch (err) {
-      console.error("Error fetching document:", err.message);
       setStatus((prev) => ({ ...prev, error: "Failed to fetch document" }));
     }
   }, [file]);
@@ -66,19 +58,13 @@ export const StudentDashboard = () => {
       alert("No document found to add.");
       return;
     }
-  
+
     try {
-      console.log("Adding document to vault...", fetchedDocument);
-  
-      const response = await axios.post(
-        "http://localhost:5000/api/vault/addtoVault",
-         fetchedDocument , // Pass the fetched document
-        {
-          headers: { Authorization: `Bearer ${Cookies.get("jwt")}` },
-          withCredentials: true,
-        }
-      );
-  
+      const response = await axios.post("http://localhost:5000/api/vault/addtoVault", fetchedDocument, {
+        headers: { Authorization: `Bearer ${Cookies.get("jwt")}` },
+        withCredentials: true,
+      });
+
       if (response.data.success) {
         alert("Document added to vault successfully!");
         setVaultDocuments((prev) => [...prev, fetchedDocument]);
@@ -87,26 +73,23 @@ export const StudentDashboard = () => {
         alert("Failed to add document to vault.");
       }
     } catch (err) {
-      console.error("Error adding document to vault:", err.message);
       alert("Failed to add document to vault.");
     }
   };
 
   const fetchVaultDocuments = useCallback(async () => {
-    setVaultLoading(true); // Start loading only for vault documents
+    setVaultLoading(true);
     try {
-      console.log("Fetching vault documents...");
-       const response = await axios.get("http://localhost:5000/api/vault/Myvault", {
-      withCredentials: true, 
-      headers: { Authorization: `Bearer ${Cookies.get("jwt")}` }
-    });
+      const response = await axios.get("http://localhost:5000/api/vault/Myvault", {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${Cookies.get("jwt")}` },
+      });
 
       setVaultDocuments(response.data.documents);
     } catch (err) {
-      console.error("Error fetching vault documents:", err.message);
       setVaultDocuments([]);
     } finally {
-      setVaultLoading(false); // Stop loading only for vault
+      setVaultLoading(false);
     }
   }, []);
 
@@ -115,28 +98,28 @@ export const StudentDashboard = () => {
     fetchVaultDocuments();
   }, [fetchStudents, fetchVaultDocuments]);
 
-  if (status.loading) return <p>Loading...</p>;
-  if (status.error) return <p>{status.error}</p>;
+  if (status.loading) return <p className="text-center text-gray-600">Loading...</p>;
+  if (status.error) return <p className="text-center text-red-500">{status.error}</p>;
 
   return (
-    <div className={styles["dashboard-container"]}>
+    <div className="max-w-full h-fit mx-auto p-6 bg-white shadow-lg rounded-lg">
       <Header title={headerInfo.title} abcID={headerInfo.abcID} />
-      <hr />
-      <div className={styles["upload-container"]}>
+      <hr className="my-4 border-gray-300" />
+      <div className="mb-4">
         <Upload setFile={setFile} />
       </div>
-      <button onClick={fetchDocuments} className={styles["fetch-btn"]}>
+      <button onClick={fetchDocuments} className="px-4 py-2 border-2 border-green-500 text-green-600 rounded-xl hover:bg-green-100">
         Fetch Document
       </button>
       <DocumentCard document={fetchedDocument} addToVault={addToVault} />
 
       {vaultLoading ? (
-        <p>Loading Vault Documents...</p>
+        <p className="text-center text-gray-600 mt-4">Loading Vault Documents...</p>
       ) : (
         <>
           <MyVault documents={vaultDocuments.slice(0, 4)} />
           {vaultDocuments.length > 4 && (
-            <button onClick={() => navigate("/vault")} className={styles["more-btn"]}>
+            <button onClick={() => navigate("/vault")} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition">
               View More
             </button>
           )}

@@ -1,14 +1,13 @@
 import React from "react";
-import styles from "./Header.module.css";
 
 export const Header = ({ title, subTitle, pid, abcID }) => {
   return (
-    <div className={styles["header-container"]}>  
-      <div className={styles.titleContainer}>
-        <h1 className={styles.title}>{title}</h1>
-        <h1 className={styles.pid}>({abcID ? abcID : pid})</h1> {/* Render abcID if present, else render pid */}
+    <div className="w-full h-[75px]">
+      <div className="flex justify-between w-fit px-1">
+        <h1 className="text-3xl font-medium">{title}</h1>
+        <h1 className="text-3xl font-medium">({abcID ? abcID : pid})</h1>
       </div>
-      <p className={styles["sub-title"]}>{subTitle}</p>
+      <p className="text-base px-1">{subTitle}</p>
     </div>
   );
 };

@@ -1,26 +1,33 @@
 import React, { useState } from "react";
-import styles from "./upload.module.css";
 
 export const Upload = ({ setFile }) => {
   const [fileName, setFileName] = useState("Please upload a copy of valid identification");
 
   const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0]; // Get the selected file
+    const selectedFile = event.target.files[0]; 
     if (selectedFile) {
-      setFile(selectedFile); // Update file state in the parent component
-      setFileName(selectedFile.name); // Update file name in local state
+      setFile(selectedFile);
+      setFileName(selectedFile.name);
     }
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.iconContainer}>
-        <img src="../../src/assets/uploadICON.svg" alt="Upload Icon" />
+    <div className="border-4 border-green-700 bg-green-50 rounded-[40px] px-12 py-10 flex flex-col items-center justify-between min-w-[1316px] min-h-[250px]">
+      <div className="flex justify-center items-center p-2 rounded-full bg-green-200">
+        <img src="../src/assets/uploadICON.svg" alt="Upload Icon" className="w-12 h-12" />
       </div>
-      <p>{fileName}</p> {/* Display the selected file name */}
-      <label htmlFor="file">
-        <input type="file" id="file" name="file" style={{ display: "none" }} onChange={handleFileChange} />
-        <span className={styles.button}>Upload</span>
+      <p className="mt-2 text-center">{fileName}</p> 
+      <label htmlFor="file" className="mt-2">
+        <input 
+          type="file" 
+          id="file" 
+          name="file" 
+          className="hidden" 
+          onChange={handleFileChange} 
+        />
+        <span className="px-12 py-2 border-2 border-green-600 rounded-lg cursor-pointer hover:bg-green-100 transition">
+          Upload
+        </span>
       </label>
     </div>
   );

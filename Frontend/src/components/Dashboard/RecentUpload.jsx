@@ -1,38 +1,37 @@
 import React from "react";
-import styles from "./RecentUpload.module.css"; // Import CSS file
 
 export const RecentUpload = ({ student = {} }) => {
-    const documents = Array.isArray(student) ? student : student.documents || [student];
+  const documents = Array.isArray(student) ? student : student.documents || [student];
 
-    console.log("Documents Array:", documents);
+  console.log("Documents Array:", documents);
 
-    return (
-        <div className={styles.container}>
-            <h2 className={styles.title}>Documents</h2>
-            {documents.length > 0 ? (
-                <div className={styles["table-container"]}>
-                    <table className={styles["styled-table"]}>
-                        <thead>
-                            <tr className={styles["table-header-row"]}>
-                                <th className={styles["table-header-cell"]}>Document Name</th>
-                                <th className={styles["table-header-cell"]}>Hash</th>
-                                <th className={styles["table-header-cell"]}>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {documents.map((doc, index) => (
-                                <tr key={index} className={styles["table-body-row"]}>
-                                    <td className={styles["table-body-cell"]}>{doc.documentName}</td>
-                                    <td className={`${styles["table-body-cell"]} ${styles.hash}`}>{doc.documentHash}</td>
-                                    <td className={styles["table-body-cell"]}>{new Date(doc.createdAt).toLocaleDateString()}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            ) : (
-                <p>No documents found.</p>
-            )}
+  return (
+    <div className="my-4">
+      <h2 className="text-lg font-bold mb-4">Documents</h2>
+      {documents.length > 0 ? (
+        <div className="overflow-hidden rounded-lg border border-gray-300">
+          <table className="w-full border-collapse">
+            <thead className="bg-white">
+              <tr>
+                <th className="py-3 px-4 text-center font-medium">Document Name</th>
+                <th className="py-3 px-4 text-center font-medium">Hash</th>
+                <th className="py-3 px-4 text-center font-medium">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {documents.map((doc, index) => (
+                <tr key={index} className="border-t border-gray-300 bg-green-50">
+                  <td className="py-3 px-4 text-center">{doc.documentName}</td>
+                  <td className="py-3 px-4 text-center text-gray-600">{doc.documentHash}</td>
+                  <td className="py-3 px-4 text-center">{new Date(doc.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-    );
+      ) : (
+        <p>No documents found.</p>
+      )}
+    </div>
+  );
 };

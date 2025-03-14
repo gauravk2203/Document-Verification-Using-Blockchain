@@ -17,12 +17,17 @@ export const addDocument = async (req, res) => {
     try {
         // Upload file to IPFS
         const ipfsHash = await uploadDocument(file.buffer, file.originalname);
-        console.log("IPFS Hash:", ipfsHash);
-        console.log("abcID:", abcID);
+
+        // Check if documentHash already exists in any document
+        const existingDocument = await Document.findOne({ "documents.documentHash": ipfsHash });
+
+        if (existingDocument) {
+            return res.status(400).json({ error: 'This document already exists in the system.' });
+        }
 
         // Store hash on blockchain
         try {
-            await storeHashOnBlockchain(abcID , ipfsHash);
+            await storeHashOnBlockchain(abcID, ipfsHash);
         } catch (blockchainError) {
             console.error('Blockchain error:', blockchainError.message);
             return res.status(500).json({ error: 'Failed to store hash on blockchain' });

@@ -59,6 +59,7 @@ export const GetHash = async (req , res) => {
 
         // ✅ Find the document with the matching hash
         const matchingDocument = document.documents.find(doc => doc.documentHash === documentHash);
+        // console.log("📜 Matching Document:", matchingDocument);
 
         if (matchingDocument) {
             return res.json({ document: matchingDocument });

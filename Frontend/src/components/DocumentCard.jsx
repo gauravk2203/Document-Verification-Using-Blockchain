@@ -1,14 +1,16 @@
 import React from "react";
-import styles from "./DocumentCard.module.css";
 
 export const DocumentCard = ({ document, addToVault }) => {
   if (!document) return null;
 
   return (
-    <div className={styles["document-card"]}>
-      <h3>Fetched Document</h3>
-      <p>{document.name}</p>
-      <button onClick={addToVault} className={styles["add-vault-btn"]}>
+    <div className="bg-white p-4 my-4 rounded-lg shadow-md text-center">
+      <h3 className="text-lg font-semibold">Fetched Document</h3>
+      <p className="text-gray-700">{document.name}</p>
+      <button
+        onClick={addToVault}
+        className="bg-blue-500 text-white px-4 py-2 rounded-md mt-3 hover:bg-blue-700 transition duration-200"
+      >
         Add to My Vault
       </button>
     </div>

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Header } from "../components/Dashboard/Header.jsx";
 import { AddStudent } from "../components/Dashboard/AddStudent.jsx";
-import styles from "./InstituteDashboard.module.css";
 import { StudentList } from "../components/Dashboard/StudentsList.jsx";
 import { CreateStudent } from "../components/CreateStudent.jsx";
 import { Upload } from "../components/Dashboard/Upload.jsx";
 import { DocInput } from "../components/Dashboard/DocInput.jsx";
 import { RecentUpload } from "../components/Dashboard/RecentUpload.jsx";
+import { ReceiptPopup } from "../Components/ReceiptPopup.jsx";
 
 export const InstituteDashboard = () => {
     const [students, setStudents] = useState([]);
@@ -25,9 +25,7 @@ export const InstituteDashboard = () => {
         title : "St. John College of Engineering and Management" ,
         subTitle : "Etheregg making it safe" ,
         pid : ""
-    })
-   
-
+    });
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -83,9 +81,8 @@ export const InstituteDashboard = () => {
         setDocument([]);
     };
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-
+    if (loading) return <div className="text-center text-gray-600">Loading...</div>;
+    if (error) return <div className="text-center text-red-500">Error: {error}</div>;
 
     const fileupload = async () => {
         if (!file || !inputData || !selectedStudent) {
@@ -95,12 +92,13 @@ export const InstituteDashboard = () => {
     
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("inputData", inputData);
-        formData.append("studentID", selectedStudent.abcID);
+        formData.append("documentName", inputData);
+        formData.append("abcID", selectedStudent.abcID);
     
         try {
             const uploadDoc = await axios.post("http://localhost:5000/api/document/upload", formData, {
-                headers: { "Content-Type": "multipart/form-data" }
+                headers: { "Content-Type": "multipart/form-data" },
+                withCredentials: true
             });
     
             if (uploadDoc.status === 200) {
@@ -125,12 +123,9 @@ export const InstituteDashboard = () => {
         }
     };
 
-    // console.log('this is the selected student', selectedStudent);
-    // console.log('this is the  document ', document);
-
     return (
-        <div className={styles.container}>
-            <div className={styles.content}>
+        <div className="flex">
+            <div className="flex-grow p-6">
                 <Header 
                     title={headerInfo.title}
                     subTitle={headerInfo.subTitle}
@@ -139,10 +134,15 @@ export const InstituteDashboard = () => {
 
                 {selectedStudent ? (
                     <div>
-                        <Upload  setFile={setFile} />
+                        <Upload setFile={setFile} />
                         <DocInput setInputData={setInputData} onSubmit={fileupload} />
                         <RecentUpload student={document} />
-                        <button onClick={handleBackToList}>Back to Student List</button>
+                        <button 
+                            onClick={handleBackToList} 
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition"
+                        >
+                            Back to Student List
+                        </button>
                     </div>
                 ) : (
                     <div>
@@ -158,12 +158,13 @@ export const InstituteDashboard = () => {
                     </div>
                 )}
             </div>
+
             {showReceipt && (
-        <ReceiptPopup 
-            receiptData={receiptData} 
-            onClose={() => setShowReceipt(false)} 
-        />
-    )}
+                <ReceiptPopup 
+                    receiptData={receiptData} 
+                    onClose={() => setShowReceipt(false)} 
+                />
+            )}
         </div>
     );
 };

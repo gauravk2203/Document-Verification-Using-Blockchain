@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { DocumentCard } from "../components/DocumentCard.jsx";
-import styles from "./Vault.module.css";
 
 export const Vault = () => {
   const navigate = useNavigate();
@@ -29,20 +28,23 @@ export const Vault = () => {
   }, [fetchVaultDocuments]);
 
   return (
-    <div className={styles["vault-container"]}>
-      <h1>My Vault</h1>
-      <button onClick={() => navigate(-1)} className={styles["back-btn"]}>
+    <div className="max-w-3xl mx-auto text-center p-6">
+      <h1 className="text-2xl font-bold mb-4">My Vault</h1>
+      <button
+        onClick={() => navigate(-1)}
+        className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4 hover:bg-blue-700 transition duration-200"
+      >
         ← Back to Dashboard
       </button>
 
       {loading ? (
-        <p>Loading Vault Documents...</p>
+        <p className="text-gray-600">Loading Vault Documents...</p>
       ) : error ? (
-        <p className={styles["error-msg"]}>{error}</p>
+        <p className="text-red-500 font-semibold">{error}</p>
       ) : vaultDocuments.length === 0 ? (
-        <p>No documents found in your vault.</p>
+        <p className="text-gray-700">No documents found in your vault.</p>
       ) : (
-        <div className={styles["document-grid"]}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
           {vaultDocuments.map((doc, index) => (
             <DocumentCard key={index} document={doc} />
           ))}

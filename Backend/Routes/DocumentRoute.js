@@ -12,7 +12,7 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
-router.post('/upload', upload.single('file'), addDocument)
+router.post('/upload', upload.single('file'), verifyToken, addDocument)
 
 router.post('/hash', GetHash);
 

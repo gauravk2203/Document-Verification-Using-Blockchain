@@ -5,6 +5,8 @@ import validateInstitute from '../Middleware/validateInstituteMiddleware.js';
 import  registerInstitute  from '../Controllers/InstituteController.js';
 import { Login } from '../Controllers/Student_LoginController.js';
 import { LOGIN } from '../Controllers/Institute_LoginController.js';
+import { getUserDetails } from '../Controllers/authController.js';
+import verifyToken from '../Middleware/verifyToken.js';
 
 const router = express.Router();
 
@@ -14,9 +16,11 @@ router.post('/studentRegister', validateStudent, registerStudent);
 // Route for intitute registration
 router.post('/instituteRegister', validateInstitute, registerInstitute);
 
-router.post('/studentlogin', Login)
+router.post('/studentlogin', Login);
 
-router.post('/institutelogin', LOGIN)
+router.post('/institutelogin', LOGIN);
+
+router.get("/UserDetails", verifyToken, getUserDetails);
 
 router.post("/logout", (req, res) => {
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "Strict" });
