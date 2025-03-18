@@ -11,10 +11,6 @@ const instituteStudentSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    email: {
-      type: String,
-      required: true,
-    },
     course: {
       type: String,
       required: true,
@@ -30,7 +26,6 @@ const instituteStudentSchema = new mongoose.Schema(
     studentId: {
       type: mongoose.Schema.ObjectId,
       ref: "Student",
-      required: true,
     },
     instituteId: {
       type: mongoose.Schema.ObjectId,

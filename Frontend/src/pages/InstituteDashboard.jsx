@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Header } from "../components/Dashboard/Header.jsx";
-import { AddStudent } from "../components/Dashboard/AddStudent.jsx";
-import { StudentList } from "../components/Dashboard/StudentsList.jsx";
-import { CreateStudent } from "../components/CreateStudent.jsx";
+import { AddStudent } from "../Components/Dashboard/AddStudent.jsx";
+import { StudentList } from "../Components/Dashboard/StudentsList.jsx";
+import { CreateStudent } from "../Components/CreateStudent.jsx";
 import { Upload } from "../components/Dashboard/Upload.jsx";
-import { DocInput } from "../components/Dashboard/DocInput.jsx";
-import { RecentUpload } from "../components/Dashboard/RecentUpload.jsx";
+import { DocInput } from "../Components/Dashboard/DocInput.jsx";
+import { RecentUpload } from "../Components/Dashboard/RecentUpload.jsx";
 import { ReceiptPopup } from "../Components/ReceiptPopup.jsx";
 
 export const InstituteDashboard = () => {
@@ -14,17 +14,15 @@ export const InstituteDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showCreateStudent, setShowCreateStudent] = useState(false);
-    const [selectedStudent, setSelectedStudent] = useState(null);
-    const [studentDetails, setStudentDetails] = useState(null);
-    const [document, setDocument] = useState([]);
+    const [selectedStudentInfo, setSelectedStudentInfo] = useState(null);
     const [file, setFile] = useState(null);
     const [inputData, setInputData] = useState("");
     const [showReceipt, setShowReceipt] = useState(false);
     const [receiptData, setReceiptData] = useState(null);
-    const [headerInfo , setheaderinfo] = useState({
-        title : "St. John College of Engineering and Management" ,
-        subTitle : "Etheregg making it safe" ,
-        pid : ""
+    const [headerInfo, setHeaderInfo] = useState({
+        title: "St. John College of Engineering and Management",
+        subTitle: "Etheregg making it safe",
+        pid: ""
     });
 
     useEffect(() => {
@@ -41,16 +39,6 @@ export const InstituteDashboard = () => {
         fetchStudents();
     }, []);
 
-    useEffect(() => {
-        if (studentDetails) {
-            setheaderinfo({
-                title: studentDetails.studentName,
-                subTitle: studentDetails.course,
-                pid: studentDetails.pid
-            });
-        }
-    }, [studentDetails]);
-
     const handleAddStudentClick = () => setShowCreateStudent(true);
     const handleCreateStudentClick = () => setShowCreateStudent(false);
 
@@ -60,50 +48,62 @@ export const InstituteDashboard = () => {
     };
 
     const handleStudentClick = async (student) => {
-        setSelectedStudent(student);
-
         try {
-            // Fetch student details (Name & Course)
-            const studentResponse = await axios.get(`http://localhost:5000/api/Institute/getStudent/${student.abcID}`);
-            setStudentDetails(studentResponse.data);
+            const [studentResponse, documentResponse] = await Promise.all([
+                axios.get(`http://localhost:5000/api/Institute/getStudent/${student.abcID}`),
+                axios.get(`http://localhost:5000/api/document/hashes/${student.abcID}`)
+            ]);
 
-            // Fetch document hashes
-            const documentResponse = await axios.get(`http://localhost:5000/api/document/hashes/${student.abcID}`);
-            setDocument(documentResponse.data || []);
+            const studentDetails = studentResponse.data;
+            const documents = documentResponse.data || [];
+
+            setSelectedStudentInfo({ student, details: studentDetails, documents });
+
+            // **Ensure `headerInfo` updates immediately using functional update**
+            setHeaderInfo((prev) => ({
+                ...prev,
+                title: studentDetails.studentName || "Student Name",
+                subTitle: studentDetails.course || "Course",
+                pid: studentDetails.pid || ""
+            }));
+
         } catch (err) {
             console.error("Error fetching student data:", err);
         }
     };
 
     const handleBackToList = () => {
-        setSelectedStudent(null);
-        setStudentDetails(null);
-        setDocument([]);
+        setSelectedStudentInfo(null);
+        setHeaderInfo({
+            title: "St. John College of Engineering and Management",
+            subTitle: "Etheregg making it safe",
+            pid: ""
+        });
     };
 
     if (loading) return <div className="text-center text-gray-600">Loading...</div>;
     if (error) return <div className="text-center text-red-500">Error: {error}</div>;
 
     const fileupload = async () => {
-        if (!file || !inputData || !selectedStudent) {
+        if (!file || !inputData || !selectedStudentInfo?.student) {
             alert("Please select a student, upload a file, and enter a document name.");
             return;
         }
-    
+
         const formData = new FormData();
         formData.append("file", file);
         formData.append("documentName", inputData);
-        formData.append("abcID", selectedStudent.abcID);
-    
+        formData.append("abcID", selectedStudentInfo.student.abcID);
+
         try {
             const uploadDoc = await axios.post("http://localhost:5000/api/document/upload", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
                 withCredentials: true
             });
-    
+
             if (uploadDoc.status === 200) {
                 alert("Data uploaded successfully!");
-                
+
                 // Simulated Blockchain Receipt (Replace with actual API response)
                 const blockchainReceipt = {
                     transactionHash: uploadDoc.data.transactionHash || "0xabc123...",
@@ -111,9 +111,9 @@ export const InstituteDashboard = () => {
                     gasUsed: uploadDoc.data.gasUsed || "21000",
                     timestamp: new Date().toISOString()
                 };
-    
+
                 setReceiptData(blockchainReceipt);
-                setShowReceipt(true); // Show popup
+                setShowReceipt(true);
             } else {
                 alert("Upload failed!");
             }
@@ -132,11 +132,11 @@ export const InstituteDashboard = () => {
                     pid={headerInfo.pid}
                 />
 
-                {selectedStudent ? (
+                {selectedStudentInfo ? (
                     <div>
                         <Upload setFile={setFile} />
                         <DocInput setInputData={setInputData} onSubmit={fileupload} />
-                        <RecentUpload student={document} />
+                        <RecentUpload student={selectedStudentInfo.documents} />
                         <button 
                             onClick={handleBackToList} 
                             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition"

@@ -27,7 +27,7 @@ export const verify = async (req ,res) => {
                 documentHash
             });
         } else {
-            return res.status(400).json({ 
+            return res.status(200).json({ 
                 message: 'Document is not authentic.',
                 documentHash
             });

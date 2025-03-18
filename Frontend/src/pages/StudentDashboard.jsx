@@ -111,7 +111,7 @@ export const StudentDashboard = () => {
       <button onClick={fetchDocuments} className="px-4 py-2 border-2 border-green-500 text-green-600 rounded-xl hover:bg-green-100">
         Fetch Document
       </button>
-      <DocumentCard document={fetchedDocument} addToVault={addToVault} />
+      <DocumentCard {...fetchedDocument} addToVault={addToVault} />
 
       {vaultLoading ? (
         <p className="text-center text-gray-600 mt-4">Loading Vault Documents...</p>

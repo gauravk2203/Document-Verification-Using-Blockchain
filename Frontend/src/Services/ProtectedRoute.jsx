@@ -19,7 +19,7 @@ export const ProtectedRoute = ({ allowedRoles }) => {
                         withCredentials: true, // Ensures cookies are sent with request
                     });
 
-                    console.log("User fetched:", response.data);
+                    // console.log("User fetched:", response.data);
                     setUser(response.data);
                 } catch (error) {
                     console.error("Error fetching user details:", error);
@@ -32,7 +32,7 @@ export const ProtectedRoute = ({ allowedRoles }) => {
         checkAuth();
     }, [user, setUser]); // Ensure it runs if `user` changes
 
-    console.log("Auth Checked:", authChecked, "User:", user);
+    // console.log("Auth Checked:", authChecked, "User:", user);
 
     // Ensure we wait for authentication check before redirecting
     if (loading || !authChecked) {

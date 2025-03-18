@@ -26,7 +26,10 @@ export const CreateStudent = ({ onClick, onStudentAdded }) => {
         setError(null);
 
         try {
-            const response = await axios.post("http://localhost:5000/api/Institute/createStudent", studentData);
+            const response = await axios.post("http://localhost:5000/api/Institute/createStudent", studentData,{
+                headers: { "Content-Type": "application/json" },
+                withCredentials: true
+            });
             onStudentAdded(response.data.student);
             setSuccess(true);
 

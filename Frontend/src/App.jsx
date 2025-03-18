@@ -7,6 +7,7 @@ import { InstituteDashboard } from "./Pages/InstituteDashboard.jsx";
 import { StudentDashboard } from "./Pages/StudentDashboard.jsx";
 import { Vault } from "./Pages/Vault.jsx";
 import { ProtectedRoute } from "./Services/ProtectedRoute.jsx";
+import InstituteRegistration from './Pages/InstituteRegistration.jsx';
 import "./App.css";
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
       <Route path="/InstituteLogin" element={<InstituteLoginPage />} />
       <Route path="/StudentLogin" element={<StudentLoginPage />} />
       <Route path="/Verify" element={<Verifier />} />
+      <Route path="/InstituteRegister" element={<InstituteRegistration />} />
+      
 
       {/* Protected Routes */}
       <Route element={<ProtectedRoute allowedRoles={["institute"]} />}>

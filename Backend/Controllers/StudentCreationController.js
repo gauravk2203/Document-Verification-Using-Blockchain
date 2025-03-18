@@ -4,29 +4,26 @@ import { Student } from '../Models/Student.model.js';
 
 export const createStudentByInstitute = async (req, res) => {
     try {
-        const { studentName, email, abcID, instituteId , course , batch , pid } = req.body; // Removed studentId from request body
-        console.log("Request Body:", req.body);
+        const { studentName, abcID, course, batch, pid } = req.body;
+        const { instituteId } = req.user;
+        console.log("Request Body:", req.user);
 
         // Validate required fields
-        if (!studentName || !email || !abcID || !instituteId || !course || !batch || !pid) {
+        if (!studentName || !abcID || !instituteId || !course || !batch || !pid) {
             return res.status(400).json({ message: "All fields are required" });
-        }
-
-        // Check if the student already exists using abcID
-        const student = await Student.findOne({ abcID });
-        if (!student) {
-            return res.status(404).json({ message: "Student not found with the provided abcID" });
         }
 
         console.log("Received instituteId:", instituteId);
 
-        // Create new InstituteStudent entry
+        // Check if the student already exists
+        const student = await Student.findOne({ abcID });
+
+        // Create a new InstituteStudent entry
         const newInstituteStudent = new InstituteStudent({
             studentName,
-            email,
             abcID,
-            instituteId: instituteId,
-            studentId: student._id, // Use the found student's ID
+            instituteId,
+            studentId: student ? student._id : null, // Set studentId if found, else null
             course,
             batch,
             pid
